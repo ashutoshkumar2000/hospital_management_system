@@ -18,7 +18,7 @@ export class PatientController {
 
   @Post()
   create(@Body() createPatientDto: CreatePatientDto) {
-    return null; //return this.patientService.create(createPatientDto);
+    return this.patientService.create(createPatientDto);
   }
 
   @Get()
@@ -27,8 +27,8 @@ export class PatientController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.patientService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.patientService.findOne(+id);
   }
 
   @Patch(':id')

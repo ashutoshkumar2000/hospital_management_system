@@ -6,10 +6,16 @@ import { Patient } from '../patient/entities/patient.entity';
 import { Observation } from './entities/observation.entity';
 import { PatientService } from '../patient/patient.service';
 import { DoctorModule } from '../doctor/doctor.module';
+import { Test } from '../test/entities/test.entity';
+import { TestService } from '../test/test.service';
+import { Doctor } from '../doctor/entities/doctor.entity';
 
 @Module({
   controllers: [ObservationController],
-  providers: [ObservationService, PatientService],
-  imports: [TypeOrmModule.forFeature([Patient, Observation]), DoctorModule],
+  providers: [ObservationService, PatientService, TestService],
+  imports: [
+    TypeOrmModule.forFeature([Patient, Observation, Test, Doctor]),
+    DoctorModule,
+  ],
 })
 export class ObservationModule {}

@@ -1,5 +1,14 @@
+import { IsNotEmpty } from 'class-validator';
+
 export class CreateObservationDto {
-  name:string;
-  report:string;
+  @IsNotEmpty()
+  name: string;
+  @IsNotEmpty()
+  report: string;
+  @IsNotEmpty()
   patientId: number;
+  @IsNotEmpty()
+  isObservedByDoctor: boolean;
+  @IsNotEmpty()
+  testIds: number[];
 }

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { DoctorService } from '../doctor/doctor.service';
 import { Doctor } from '../doctor/entities/doctor.entity';
+import { Users } from '../user/entities/user.entity';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 import { Patient } from './entities/patient.entity';
@@ -13,9 +14,16 @@ export class PatientService {
   constructor(
     private readonly doctorService: DoctorService,
     @InjectRepository(Patient) private patientRepo: Repository<Patient>,
+    @InjectRepository(Users) private userRepo: Repository<Users>,
     private jwtService: JwtService,
   ) {}
-  async create(createPatientDto: CreatePatientDto) {
+  async create(createPatientDto: CreatePatientDto, headers: any) {
+    if (createPatientDto.email !== headers.email) {
+      return {
+        message: 'Something went wrong',
+        error: 'Email not found',
+      };
+    }
     const doctors: Doctor[] = await this.doctorService.getDoctors(
       createPatientDto.doctorIds,
     );
@@ -31,8 +39,18 @@ export class PatientService {
     });
     return newPatient;
   }
-  findAll() {
-    return `This action returns all patient`;
+  async findAll(header: any, size: number, page: number) {
+    const user = await this.userRepo.findOne({
+      where: { email: header.email },
+    });
+
+    if (user.role === 'admin') {
+      return this.patientRepo.find({ skip: (page - 1) * size, take: size });
+    } else {
+      return {
+        message: 'Unauthorized attempt',
+      };
+    }
   }
 
   getPatients(ids: number[]): Promise<Patient[]> {

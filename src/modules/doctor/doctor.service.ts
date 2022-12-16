@@ -1,22 +1,33 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { Doctor } from './entities/doctor.entity';
+import { Users } from '../user/entities/user.entity';
 
 @Injectable()
 export class DoctorService {
   constructor(
     @InjectRepository(Doctor) private doctorRepo: Repository<Doctor>,
-    private jwtService: JwtService
-    ) {}
-  create(createDoctorDto: CreateDoctorDto) {
-    return this.doctorRepo.save({
+    @InjectRepository(Users) private userRepo: Repository<Users>,
+    private jwtService: JwtService,
+  ) {}
+  create(createDoctorDto: CreateDoctorDto, headers: any) {
+    const newUser = {
       name: createDoctorDto.name,
       email: createDoctorDto.email,
-    });
+    };
+
+    if (newUser.email !== headers.email) {
+      return {
+        message: 'Something went wrong',
+        error: 'Email not found',
+      };
+    }
+
+    return this.doctorRepo.save(newUser);
   }
 
   getDoctors(ids: number[]): Promise<Doctor[]> {
@@ -26,9 +37,20 @@ export class DoctorService {
     });
   }
 
-  findAll() {
-    return `This action returns all doctor`;
+  async findAll(header: any, size: number, page: number) {
+    const user = await this.userRepo.findOne({
+      where: { email: header.email },
+    });
+
+    if (user.role === 'admin') {
+      return this.doctorRepo.find({ skip: (page - 1) * size, take: size });
+    } else {
+      return {
+        message: 'Unauthorized attempt',
+      };
+    }
   }
+
   async findOne(id: number, headers: any) {
     const doctor = await this.doctorRepo.findOne({
       where: { id },

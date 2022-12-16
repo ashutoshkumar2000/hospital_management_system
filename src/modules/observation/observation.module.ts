@@ -10,12 +10,13 @@ import { Test } from '../test/entities/test.entity';
 import { TestService } from '../test/test.service';
 import { Doctor } from '../doctor/entities/doctor.entity';
 import { JwtService } from '@nestjs/jwt';
+import { Users } from '../user/entities/user.entity';
 
 @Module({
   controllers: [ObservationController],
   providers: [ObservationService, PatientService, TestService, JwtService],
   imports: [
-    TypeOrmModule.forFeature([Patient, Observation, Test, Doctor]),
+    TypeOrmModule.forFeature([Patient, Observation, Test, Doctor, Users]),
     DoctorModule,
   ],
 })

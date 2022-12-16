@@ -17,19 +17,22 @@ import { RoleBasedAuth } from '../auth/role-based-auth.guard';
 
 @Controller('patient')
 @UseGuards(new RoleBasedAuth())
- 
 export class PatientController {
   constructor(private readonly patientService: PatientService) {}
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createPatientDto: CreatePatientDto) {
-    return this.patientService.create(createPatientDto);
+  create(@Body() createPatientDto: CreatePatientDto, @Headers() headers: any) {
+    return this.patientService.create(createPatientDto, headers);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
-  findAll() {
-    return this.patientService.findAll();
+  @Get(':pageWidth/:pageSize')
+  findAll(
+    @Param('pageWidth') pageWidth: number,
+    @Param('pageSize') pageSize: number,
+    @Headers() headers: Headers,
+  ) {
+    return this.patientService.findAll(headers, pageWidth, pageSize);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -13,7 +13,7 @@ export class DoctorService {
     @InjectRepository(Doctor) private doctorRepo: Repository<Doctor>,
     @InjectRepository(Users) private userRepo: Repository<Users>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
   create(createDoctorDto: CreateDoctorDto, headers: any) {
     const newUser = {
       name: createDoctorDto.name,
@@ -66,10 +66,7 @@ export class DoctorService {
   }
 
   update(id: number, updateDoctorDto: UpdateDoctorDto) {
-    return `This action updates a #${id} doctor`;
+    return this.doctorRepo.update(id, updateDoctorDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} doctor`;
-  }
 }

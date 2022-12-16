@@ -18,8 +18,8 @@ import { RoleBasedAuth } from '../auth/role-based-auth.guard';
 @Controller('patient')
 @UseGuards(new RoleBasedAuth())
 export class PatientController {
-  constructor(private readonly patientService: PatientService) {}
-  @UseGuards(JwtAuthGuard)
+  constructor(private readonly patientService: PatientService) { }
+
   @Post()
   create(@Body() createPatientDto: CreatePatientDto, @Headers() headers: any) {
     return this.patientService.create(createPatientDto, headers);
@@ -35,17 +35,20 @@ export class PatientController {
     return this.patientService.findAll(headers, pageWidth, pageSize);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string, @Headers() headers: Headers) {
     return await this.patientService.findOne(+id, headers);
   }
-  @UseGuards(JwtAuthGuard)
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePatientDto: UpdatePatientDto) {
-    return this.patientService.update(+id, updatePatientDto);
+  update(
+    @Param('id') id: string,
+    @Body() updatePatientDto: UpdatePatientDto,
+    @Headers() headers: any,
+  ) {
+    return this.patientService.update(+id, updatePatientDto, headers);
   }
-  @UseGuards(JwtAuthGuard)
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.patientService.remove(+id);

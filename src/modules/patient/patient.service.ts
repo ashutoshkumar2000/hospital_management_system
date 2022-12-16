@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,7 +17,7 @@ export class PatientService {
     @InjectRepository(Patient) private patientRepo: Repository<Patient>,
     @InjectRepository(Users) private userRepo: Repository<Users>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
   async create(createPatientDto: CreatePatientDto, headers: any) {
     if (createPatientDto.email !== headers.email) {
       return {
@@ -81,8 +82,19 @@ export class PatientService {
     return report;
   }
 
-  update(id: number, updatePatientDto: UpdatePatientDto) {
-    return `This action updates a #${id} patient`;
+  async update(id: number, updatePatientDto: UpdatePatientDto, headers: any) {
+    const user = await this.userRepo.findOne({
+      where: { email: headers.email },
+    });
+
+    if (user.role == 'admin' || user.role == 'Patient')
+      return this.patientRepo.update(id, updatePatientDto);
+    else {
+      return {
+        message: 'Something went wrong',
+        error: 'Email not found',
+      };
+    }
   }
 
   remove(id: number) {

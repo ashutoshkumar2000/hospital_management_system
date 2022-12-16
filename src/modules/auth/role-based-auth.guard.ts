@@ -15,7 +15,7 @@ export class RoleBasedAuth extends AuthGuard('jwt') {
   handleRequest(err, user, info, context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
     if (
-      request.headers.role !== user.role ||
+      request.headers.role !== (user.role || 'admin') ||
       request.headers.email !== user.email
     ) {
       throw new ForbiddenException();

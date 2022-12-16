@@ -31,12 +31,12 @@ export class DoctorController {
   }
 
   @Get(':pageWidth/:pageSize')
-  async findAll(
+  findAll(
     @Param('pageWidth') pageWidth: number,
     @Param('pageSize') pageSize: number,
     @Headers() headers: Headers,
   ) {
-    return await this.doctorService.findAll(headers, pageWidth, pageSize);
+    return this.doctorService.findAll(headers, pageWidth, pageSize);
   }
 
   @Get(':id')

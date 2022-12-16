@@ -11,7 +11,7 @@ export class TestService {
   constructor(
     @InjectRepository(Test) private TestRepo: Repository<Test>,
     private patientService: PatientService,
-  ) {}
+  ) { }
   async create(createTestDto: CreateTestDto) {
     const newTest = await this.TestRepo.save({
       name: createTestDto.name,
@@ -36,13 +36,5 @@ export class TestService {
       where: { id },
       relations: ['observations'],
     });
-  }
-
-  update(id: number, updateTestDto: UpdateTestDto) {
-    return `This action updates a #${id} medication`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} medication`;
   }
 }

@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { DoctorService } from '../doctor/doctor.service';
@@ -12,6 +13,7 @@ export class PatientService {
   constructor(
     private readonly doctorService: DoctorService,
     @InjectRepository(Patient) private patientRepo: Repository<Patient>,
+    private jwtService: JwtService,
   ) {}
   async create(createPatientDto: CreatePatientDto) {
     const doctors: Doctor[] = await this.doctorService.getDoctors(
@@ -39,12 +41,26 @@ export class PatientService {
       relations: ['patients'],
     });
   }
-
-  async findOne(id: number) {
-    return this.patientRepo.findOne({
+  async find(id: number) {
+    const report = await this.patientRepo.findOne({
       where: { id: id },
       relations: ['observations', 'doctors'],
     });
+    return report;
+  }
+
+  async findOne(id: number, headers: any) {
+    const report = await this.find(id);
+    const userData: any = this.jwtService.decode(
+      headers.authorization.split(' ')[1],
+    );
+    if (report?.email !== userData.email) {
+      return {
+        code: 401,
+        message: 'Please log in again! URL corruption occured!!!',
+      };
+    }
+    return report;
   }
 
   update(id: number, updatePatientDto: UpdatePatientDto) {

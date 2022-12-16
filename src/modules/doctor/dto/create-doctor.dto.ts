@@ -1,4 +1,4 @@
 export class CreateDoctorDto {
-  name:string;
-  email:string;
+  name: string;
+  email: string;
 }

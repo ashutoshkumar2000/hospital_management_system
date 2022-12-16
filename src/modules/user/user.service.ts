@@ -13,6 +13,7 @@ export class UserService {
     user.email = userData.email;
     user.name = userData.name;
     user.password = userData.password;
+    user.role = userData.role;
 
     const result = await this.repository.save(user);
     return result;

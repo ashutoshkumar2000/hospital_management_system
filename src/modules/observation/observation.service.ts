@@ -17,7 +17,7 @@ export class ObservationService {
     private testService: TestService,
   ) {}
   async create(createObservationDto: CreateObservationDto) {
-    const patient = await this.patientService.findOne(
+    const patient = await this.patientService.find(
       createObservationDto.patientId,
     );
     const tests: Test[] = await this.testService.getTests(

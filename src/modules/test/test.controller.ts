@@ -15,7 +15,7 @@ import { TestService } from './test.service';
 
 @Controller('test')
 export class TestController {
-  constructor(private readonly TestService: TestService) { }
+  constructor(private readonly TestService: TestService) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()

@@ -20,9 +20,9 @@ import { UserModule } from './modules/user/user.module';
     DoctorModule,
     PatientModule,
     UserModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

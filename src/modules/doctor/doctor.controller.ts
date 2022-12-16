@@ -23,13 +23,20 @@ import { UpdateDoctorDto } from './dto/update-doctor.dto';
 export class DoctorController {
   constructor(private readonly doctorService: DoctorService) {}
   @Post()
-  async create(@Body() createDoctorDto: CreateDoctorDto) {
-    return await this.doctorService.create(createDoctorDto);
+  async create(
+    @Body() createDoctorDto: CreateDoctorDto,
+    @Headers() headers: any,
+  ) {
+    return await this.doctorService.create(createDoctorDto, headers);
   }
 
-  @Get()
-  findAll() {
-    return this.doctorService.findAll();
+  @Get(':pageWidth/:pageSize')
+  async findAll(
+    @Param('pageWidth') pageWidth: number,
+    @Param('pageSize') pageSize: number,
+    @Headers() headers: Headers,
+  ) {
+    return await this.doctorService.findAll(headers, pageWidth, pageSize);
   }
 
   @Get(':id')

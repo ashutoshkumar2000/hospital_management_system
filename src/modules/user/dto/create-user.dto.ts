@@ -9,6 +9,15 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   password: string;
+
+  @IsNotEmpty()
+  role: string;
+}
+
+export enum Role {
+  Doctor = 'doctor',
+  Patient = 'patient',
+  Staff = 'staff',
 }
 
 export class GetUserDto {

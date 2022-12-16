@@ -21,7 +21,7 @@ import { UpdateDoctorDto } from './dto/update-doctor.dto';
 @UseGuards(new JwtAuthGuard())
 @UseGuards(new RoleBasedAuth())
 export class DoctorController {
-  constructor(private readonly doctorService: DoctorService) {}
+  constructor(private readonly doctorService: DoctorService) { }
   @Post()
   async create(
     @Body() createDoctorDto: CreateDoctorDto,
@@ -50,10 +50,5 @@ export class DoctorController {
     @Body() updateDoctorDto: UpdateDoctorDto,
   ) {
     return await this.doctorService.update(+id, updateDoctorDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.doctorService.remove(+id);
   }
 }

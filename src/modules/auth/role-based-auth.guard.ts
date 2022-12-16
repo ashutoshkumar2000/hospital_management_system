@@ -4,6 +4,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Role } from 'enums/roles.enum';
 import { Request } from 'express';
 
 @Injectable()
@@ -15,7 +16,7 @@ export class RoleBasedAuth extends AuthGuard('jwt') {
   handleRequest(err, user, info, context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
     if (
-      request.headers.role !== (user.role || 'admin') ||
+      request.headers.role !== (user.role || Role.Admin) ||
       request.headers.email !== user.email
     ) {
       throw new ForbiddenException();

@@ -2,6 +2,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Role } from 'enums/roles.enum';
 import { In, Repository } from 'typeorm';
 import { DoctorService } from '../doctor/doctor.service';
 import { Doctor } from '../doctor/entities/doctor.entity';
@@ -45,8 +46,8 @@ export class PatientService {
       where: { email: header.email },
     });
 
-    if (user.role === 'admin') {
-      return this.patientRepo.find({ skip: (page - 1) * size, take: size });
+    if (user.role === Role.Admin) {
+      return await this.patientRepo.find({ where: {}, skip: (page - 1) * size, take: size, relations: ['observations', 'doctors'] },);
     } else {
       return {
         message: 'Unauthorized attempt',
@@ -87,7 +88,7 @@ export class PatientService {
       where: { email: headers.email },
     });
 
-    if (user.role == 'admin' || user.role == 'Patient')
+    if (user.role == Role.Admin || user.role == Role.Patient)
       return this.patientRepo.update(id, updatePatientDto);
     else {
       return {
@@ -97,7 +98,19 @@ export class PatientService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} patient`;
+  async remove(id: number, header: any) {
+    const user = await this.userRepo.findOne({
+      where: { email: header.email },
+    });
+
+    if (user.role === Role.Admin) {
+
+      await this.patientRepo.delete({ id });
+      return { message: `Patient with ${id} has been successfully deleted`, }
+    } else {
+      return {
+        message: 'Unauthorized attempt',
+      };
+    }
   }
 }

@@ -6,6 +6,7 @@ import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { Doctor } from './entities/doctor.entity';
 import { Users } from '../user/entities/user.entity';
+import { Role } from 'enums/roles.enum';
 
 @Injectable()
 export class DoctorService {
@@ -42,7 +43,7 @@ export class DoctorService {
       where: { email: header.email },
     });
 
-    if (user.role === 'admin') {
+    if (user.role === Role.Admin) {
       return this.doctorRepo.find({ skip: (page - 1) * size, take: size });
     } else {
       return {
@@ -68,5 +69,4 @@ export class DoctorService {
   update(id: number, updateDoctorDto: UpdateDoctorDto) {
     return this.doctorRepo.update(id, updateDoctorDto);
   }
-
 }

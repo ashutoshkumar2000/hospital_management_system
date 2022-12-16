@@ -15,7 +15,7 @@ export class ObservationService {
     private observationRepo: Repository<Observation>,
     private patientService: PatientService,
     private testService: TestService,
-  ) {}
+  ) { }
   async create(createObservationDto: CreateObservationDto) {
     const patient = await this.patientService.find(
       createObservationDto.patientId,
@@ -42,18 +42,13 @@ export class ObservationService {
   }
 
   findAll() {
-    return `This action returns all observation`;
+    return this.observationRepo.find({ relations: ['patient', 'tests'] });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} observation`;
-  }
-
-  update(id: number, updateObservationDto: UpdateObservationDto) {
-    return `This action updates a #${id} observation`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} observation`;
+    return this.observationRepo.findOne({
+      where: { id },
+      relations: ['patient', 'tests'],
+    });
   }
 }
